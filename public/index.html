@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+    }
+    .weather-container {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .weather-info {
+      font-size: 24px;
+      margin-top: 10px;
+    }
+    input {
+      padding: 10px;
+      margin: 20px;
+      font-size: 16px;
+      width: 200px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    /* Style for the image */
+    img.weather-image {
+      max-width: 100%;
+      height: auto;
+      margin-top: 20px;
+      border-radius: 10px;  /* Optional: add rounded corners */
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: add a little shadow */
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Weather App</h1>
+  <input type="text" id="cityInput" placeholder="Enter city" />
+  <button onclick="getWeather()">Get Weather</button>
+
+  <!-- Image from S3 -->
+  <img src="https://weather-api-s3-malli.s3.us-east-1.amazonaws.com/Weather.jpg" class="weather-image" alt="Weather Image">
+
+  <div class="weather-container">
+    <div id="weatherInfo" class="weather-info"></div>
+  </div>
+
+  <script>
+    async function getWeather() {
+      const city = document.getElementById('cityInput').value;
+      if (!city) {
+        alert('Please enter a city name');
+        return;
+      }
+
+      const weatherDiv = document.getElementById('weatherInfo');
+      weatherDiv.innerHTML = 'Loading...';
+
+      try {
+        const response = await fetch(`/weather?city=${city}`);
+        const data = await response.json();
+        
+        if (data.error) {
+          weatherDiv.innerHTML = 'Error: ' + data.error;
+        } else {
+          weatherDiv.innerHTML = `
+            <h2>Weather in ${data.city}</h2>
+            <p>Temperature: ${data.temperature}</p>
+            <p>Description: ${data.description}</p>
+          `;
+        }
+      } catch (error) {
+        weatherDiv.innerHTML = 'Failed to fetch weather data';
+      }
+    }
+  </script>
+
+</body>
+</html>
